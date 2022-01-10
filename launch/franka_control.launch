@@ -1,26 +1,36 @@
 <?xml version="1.0" ?>
 <launch>
   <arg name="robot_ip" />
+  <arg name="robot_ns" />
   <arg name="load_gripper" default="true" />
 
   <?ignore
   <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find franka_description)/robots/panda_arm_hand.urdf.xacro'" if="$(arg load_gripper)" />
   <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find franka_description)/robots/panda_arm.urdf.xacro'" unless="$(arg load_gripper)" /> 
   ?>  
-  <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find reconcycle_description)/urdf/reconcycle_panda.xacro' robot_name:=panda_1" /> 
+  <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find reconcycle_description)/urdf/reconcycle_panda.xacro' robot_name:=$(arg robot_ns)" /> 
   
 
   <include file="$(find franka_gripper)/launch/franka_gripper.launch" if="$(arg load_gripper)">
     <arg name="robot_ip" value="$(arg robot_ip)" />
   </include>
 
-  <node name="franka_control" pkg="franka_control" type="franka_control_node" output="screen" required="true">
-    <rosparam command="load" file="$(find reconcycle_franka_control)/config/franka_control_node.yaml" />
-    <param name="robot_ip" value="$(arg robot_ip)" />
-  </node>
-  
+  <group if="$(eval robot_ns == 'panda_1')">
+    <node name="franka_control" pkg="franka_control" type="franka_control_node" output="screen" required="true">
+        <rosparam command="load" file="$(find reconcycle_franka_control)/config/franka_control_node.yaml" />
+        <param name="robot_ip" value="$(arg robot_ip)" />
+    </node>
+    <rosparam command="load" file="$(find reconcycle_franka_control)/config/default_controllers.yaml" />
+  </group>
 
-  <rosparam command="load" file="$(find reconcycle_franka_control)/config/default_controllers.yaml" />
+  <group if="$(eval robot_ns == 'panda_2')">
+    <node name="franka_control" pkg="franka_control" type="franka_control_node" output="screen" required="true">
+        <rosparam command="load" file="$(find reconcycle_franka_control)/config/franka_2_control_node.yaml" />
+        <param name="robot_ip" value="$(arg robot_ip)" />
+    </node>
+    <rosparam command="load" file="$(find reconcycle_franka_control)/config/franka_2_controllers.yaml" />
+  </group>
+
   <node name="state_controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="franka_state_controller"/>
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" output="screen"/>
   <node name="joint_state_publisher" type="joint_state_publisher" pkg="joint_state_publisher" output="screen">

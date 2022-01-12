@@ -1,42 +1,42 @@
 position_joint_trajectory_controller:
   type: position_controllers/JointTrajectoryController
   joints:
-    - panda_1_joint1
-    - panda_1_joint2
-    - panda_1_joint3
-    - panda_1_joint4
-    - panda_1_joint5
-    - panda_1_joint6
-    - panda_1_joint7
+    - $(arg robot_ns)_joint1
+    - $(arg robot_ns)_joint2
+    - $(arg robot_ns)_joint3
+    - $(arg robot_ns)_joint4
+    - $(arg robot_ns)_joint5
+    - $(arg robot_ns)_joint6
+    - $(arg robot_ns)_joint7
   constraints:
     goal_time: 0.5
-    panda_1_joint1:
+    $(arg robot_ns)_joint1:
       goal: 0.05
-    panda_1_joint2:
+    $(arg robot_ns)_joint2:
       goal: 0.05
-    panda_1_joint3:
+    $(arg robot_ns)_joint3:
       goal: 0.05
-    panda_1_joint4:
+    $(arg robot_ns)_joint4:
       goal: 0.05
-    panda_1_joint5:
+    $(arg robot_ns)_joint5:
       goal: 0.05
-    panda_1_joint6:
+    $(arg robot_ns)_joint6:
       goal: 0.05
-    panda_1_joint7:
+    $(arg robot_ns)_joint7:
       goal: 0.05
 
 robot_state_publisher:
-  tf_prefix: panda_1
+  tf_prefix: $(arg robot_ns)
 
 franka_state_controller:
   type: franka_control/FrankaStateController
   publish_rate: 30  # [Hz]
   joint_names:
-    - panda_1_joint1
-    - panda_1_joint2
-    - panda_1_joint3
-    - panda_1_joint4
-    - panda_1_joint5
-    - panda_1_joint6
-    - panda_1_joint7
-  arm_id: panda_1
+    - $(arg robot_ns)_joint1
+    - $(arg robot_ns)_joint2
+    - $(arg robot_ns)_joint3
+    - $(arg robot_ns)_joint4
+    - $(arg robot_ns)_joint5
+    - $(arg robot_ns)_joint6
+    - $(arg robot_ns)_joint7
+  arm_id: $(arg robot_ns)
